@@ -6,3 +6,26 @@ html, body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Input, Textarea, Select Disabled Styles
+/* ----------------------------------------------------------------------------------------------------- */
+
+input[disabled],
+textarea[disabled],
+.mat-mdc-select-disabled {
+  .dark & {
+    color: #cacaca !important;
+  }
+}
+
+/*
+Source - https://stackoverflow.com/a
+Posted by Mr. Stash
+Retrieved 2025-11-23, License - CC BY-SA 4.0
+*/
+
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+}

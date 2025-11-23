@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '@core/services/product.service';
 import { Product, ProductFilters } from '@core/models/product.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
-import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '@shared/components/confirm-dialog/confirm-dialog.component';
 import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.component';
 
 @Component({
@@ -19,7 +20,6 @@ import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.
     ReactiveFormsModule,
     LoadingSpinnerComponent,
     EmptyStateComponent,
-    ConfirmDialogComponent,
     ErrorAlertComponent
   ],
   templateUrl: './product-list.component.html'
@@ -32,15 +32,14 @@ export class ProductListComponent implements OnInit {
   pageSize = signal(10);
   totalCount = signal(0);
   totalPages = signal(0);
-  showDeleteDialog = signal(false);
-  productToDelete = signal<Product | null>(null);
 
   filterForm: FormGroup;
   Math = Math;
 
   constructor(
     private productService: ProductService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
       q: [''],
@@ -123,28 +122,32 @@ export class ProductListComponent implements OnInit {
   }
 
   confirmDelete(product: Product): void {
-    this.productToDelete.set(product);
-    this.showDeleteDialog.set(true);
+    const dialogData: ConfirmDialogData = {
+      title: 'Confirmar eliminación',
+      message: `¿Está seguro que desea eliminar el producto "${product.name}"?`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && product.id) {
+        this.deleteProduct(product.id);
+      }
+    });
   }
 
-  cancelDelete(): void {
-    this.productToDelete.set(null);
-    this.showDeleteDialog.set(false);
-  }
-
-  deleteProduct(): void {
-    const product = this.productToDelete();
-    if (!product?.id) return;
-
-    this.productService.deleteProduct(product.id).subscribe({
+  deleteProduct(productId: number): void {
+    this.productService.deleteProduct(productId).subscribe({
       next: () => {
-        this.showDeleteDialog.set(false);
-        this.productToDelete.set(null);
         this.loadProducts();
       },
       error: (error) => {
         this.errorMessage.set(error.message || 'Error al eliminar el producto');
-        this.showDeleteDialog.set(false);
       }
     });
   }

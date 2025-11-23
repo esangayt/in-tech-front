@@ -209,18 +209,5 @@
       </div>
     </div>
   }
-
-  <!-- Confirm Dialog -->
-  <app-confirm-dialog
-    [isOpen]="showDeleteDialog()"
-    [data]="{
-      title: 'Eliminar Persona',
-      message: '¿Estás seguro de que deseas eliminar a ' + personToDelete()?.first_name + ' ' + personToDelete()?.last_name + '? Esta acción no se puede deshacer.',
-      confirmText: 'Eliminar',
-      cancelText: 'Cancelar'
-    }"
-    (confirmed)="deletePerson()"
-    (cancelled)="cancelDelete()"
-  />
 </div>
 

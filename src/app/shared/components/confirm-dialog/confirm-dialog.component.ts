@@ -1,5 +1,7 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
+﻿import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 export interface ConfirmDialogData {
   title: string;
@@ -11,23 +13,21 @@ export interface ConfirmDialogData {
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule],
   templateUrl: './confirm-dialog.component.html'
 })
 export class ConfirmDialogComponent {
-  @Input() isOpen = false;
-  @Input() data: ConfirmDialogData = { title: '', message: '' };
-  @Output() confirmed = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
+  ) {}
 
   onConfirm(): void {
-    this.confirmed.emit();
-    this.isOpen = false;
+    this.dialogRef.close(true);
   }
 
   onCancel(): void {
-    this.cancelled.emit();
-    this.isOpen = false;
+    this.dialogRef.close(false);
   }
 }
 

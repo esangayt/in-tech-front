@@ -2,11 +2,12 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { PersonService } from '@core/services/person.service';
 import { Person, PersonFilters } from '@core/models/person.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
-import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '@shared/components/confirm-dialog/confirm-dialog.component';
 import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.component';
 
 @Component({
@@ -18,7 +19,6 @@ import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.
     ReactiveFormsModule,
     LoadingSpinnerComponent,
     EmptyStateComponent,
-    ConfirmDialogComponent,
     ErrorAlertComponent
   ],
   templateUrl: './person-list.component.html'
@@ -31,15 +31,14 @@ export class PersonListComponent implements OnInit {
   pageSize = signal(10);
   totalCount = signal(0);
   totalPages = signal(0);
-  showDeleteDialog = signal(false);
-  personToDelete = signal<Person | null>(null);
 
   filterForm: FormGroup;
   Math = Math;
 
   constructor(
     private personService: PersonService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
       email: [''],
@@ -107,28 +106,32 @@ export class PersonListComponent implements OnInit {
   }
 
   confirmDelete(person: Person): void {
-    this.personToDelete.set(person);
-    this.showDeleteDialog.set(true);
+    const dialogData: ConfirmDialogData = {
+      title: 'Confirmar eliminación',
+      message: `¿Está seguro que desea eliminar a ${person.first_name} ${person.last_name}?`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && person.id) {
+        this.deletePerson(person.id);
+      }
+    });
   }
 
-  cancelDelete(): void {
-    this.personToDelete.set(null);
-    this.showDeleteDialog.set(false);
-  }
-
-  deletePerson(): void {
-    const person = this.personToDelete();
-    if (!person?.id) return;
-
-    this.personService.deletePerson(person.id).subscribe({
+  deletePerson(personId: number): void {
+    this.personService.deletePerson(personId).subscribe({
       next: () => {
-        this.showDeleteDialog.set(false);
-        this.personToDelete.set(null);
         this.loadPersons();
       },
       error: (error) => {
         this.errorMessage.set(error.message || 'Error al eliminar la persona');
-        this.showDeleteDialog.set(false);
       }
     });
   }
