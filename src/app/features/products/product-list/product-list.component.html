@@ -1,0 +1,271 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Productos</h1>
+      <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+        Gestiona el catálogo de productos del sistema
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a
+        routerLink="/products/new"
+        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Nuevo Producto
+      </a>
+    </div>
+  </div>
+
+  <app-error-alert [message]="errorMessage()" (dismissed)="errorMessage.set('')" />
+
+  <!-- Filters -->
+  <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-6">
+    <form [formGroup]="filterForm" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <label for="q" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Búsqueda general
+          </label>
+          <input
+            id="q"
+            type="text"
+            formControlName="q"
+            placeholder="Buscar por nombre..."
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="sku" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            SKU
+          </label>
+          <input
+            id="sku"
+            type="text"
+            formControlName="sku"
+            placeholder="Buscar por SKU..."
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="price_min" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Precio mínimo
+          </label>
+          <input
+            id="price_min"
+            type="number"
+            formControlName="price_min"
+            placeholder="0"
+            min="0"
+            step="0.01"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="price_max" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Precio máximo
+          </label>
+          <input
+            id="price_max"
+            type="number"
+            formControlName="price_max"
+            placeholder="10000"
+            min="0"
+            step="0.01"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          />
+        </div>
+      </div>
+
+      <div class="flex items-end gap-4">
+        <div class="flex-1">
+          <label for="ordering" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Ordenar por
+          </label>
+          <select
+            id="ordering"
+            formControlName="ordering"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          >
+            <option value="">Sin orden</option>
+            <option value="name">Nombre A-Z</option>
+            <option value="-name">Nombre Z-A</option>
+            <option value="price">Precio ascendente</option>
+            <option value="-price">Precio descendente</option>
+            <option value="created_at">Fecha ascendente</option>
+            <option value="-created_at">Fecha descendente</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            (click)="applyFilters()"
+            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Buscar
+          </button>
+          <button
+            type="button"
+            (click)="clearFilters()"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner message="Cargando productos..." />
+  } @else if (products().length === 0) {
+    <app-empty-state
+      title="No hay productos"
+      message="No se encontraron productos. Crea uno nuevo para comenzar."
+    />
+  } @else {
+    <!-- Table -->
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Producto
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              SKU
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Precio
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Propietario
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Fecha de creación
+            </th>
+            <th scope="col" class="relative px-6 py-3">
+              <span class="sr-only">Acciones</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          @for (product of products(); track product.id) {
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <td class="px-6 py-4">
+                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ product.name }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500 dark:text-gray-300">{{ product.sku }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-semibold text-gray-900 dark:text-white">
+                  ${{ product.price | number:'1.2-2' }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                @if (product.owner_details) {
+                  <div class="text-sm text-gray-500 dark:text-gray-300">
+                    {{ product.owner_details.first_name }} {{ product.owner_details.last_name }}
+                  </div>
+                } @else {
+                  <div class="text-sm text-gray-400 dark:text-gray-500 italic">Sin propietario</div>
+                }
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500 dark:text-gray-300">
+                  {{ product.created_at | date:'short' }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a
+                  [routerLink]="['/products', product.id, 'edit']"
+                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4"
+                >
+                  Editar
+                </a>
+                <button
+                  (click)="confirmDelete(product)"
+                  class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 mt-4 rounded-lg">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+            (click)="previousPage()"
+            [disabled]="currentPage() === 1"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Anterior
+          </button>
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage() === totalPages()"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Siguiente
+          </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Mostrando
+              <span class="font-medium">{{ (currentPage() - 1) * pageSize() + 1 }}</span>
+              a
+              <span class="font-medium">{{ Math.min(currentPage() * pageSize(), totalCount()) }}</span>
+              de
+              <span class="font-medium">{{ totalCount() }}</span>
+              resultados
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button
+                (click)="previousPage()"
+                [disabled]="currentPage() === 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span class="sr-only">Anterior</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Página {{ currentPage() }} de {{ totalPages() }}
+              </span>
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage() === totalPages()"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span class="sr-only">Siguiente</span>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
