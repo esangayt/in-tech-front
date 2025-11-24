@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@core/services/auth.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -54,7 +54,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       console.error('Error HTTP:', error);
 
-      // You could integrate a toast/notification service here
       return throwError(() => ({
         status: error.status,
         message: errorMessage,

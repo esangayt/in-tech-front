@@ -267,14 +267,6 @@ Usa las credenciales configuradas en tu backend Django.
 npm test
 ```
 
-### Ejecutar tests con cobertura
-
-```bash
-npm run test -- --code-coverage
-```
-
-### Tests E2E (requiere configuración adicional)
-
 ```bash
 # Instalar Cypress o Playwright
 npm install --save-dev cypress
@@ -335,36 +327,13 @@ El `errorInterceptor` captura errores HTTP y los transforma en mensajes amigable
 ```bash
 npm start              # Inicia servidor de desarrollo
 npm run build          # Build de producción
+npm run build:prod     # Build de producción propio
 npm test               # Ejecuta tests unitarios
 npm run watch          # Build en modo watch
 npm run lint           # Verifica código con ESLint (si está configurado)
 ```
 
 ## 🔧 Configuración Adicional
-
-### Proxy para desarrollo (opcional)
-
-Si tienes problemas con CORS en desarrollo, crea `proxy.conf.json`:
-
-```json
-{
-  "/api": {
-    "target": "http://localhost:8000",
-    "secure": false,
-    "changeOrigin": true
-  }
-}
-```
-
-Y actualiza `angular.json`:
-
-```json
-"serve": {
-  "options": {
-    "proxyConfig": "proxy.conf.json"
-  }
-}
-```
 
 ### Variables de entorno adicionales
 
@@ -428,13 +397,9 @@ DELETE /api/v1/products/:id/     // Eliminar
 - ✅ **Pruebas y calidad** (10 pts): Estructura lista para tests, linting
 - ✅ **Bonus**: Autenticación JWT completa, guards, interceptors, Docker opcional
 
-## 📄 Licencia
-
-Este proyecto es parte de un desafío técnico y está disponible para evaluación.
-
 ## 👤 Autor
 
-Desarrollado como parte del desafío técnico Frontend Angular Semi-Senior para InTech.
+Desarrollado por Erlin Sangay
 
 ---
 
