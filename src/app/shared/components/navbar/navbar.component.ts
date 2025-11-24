@@ -1,6 +1,10 @@
 ﻿import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '@core/services/auth.service';
 import { HealthService } from '@core/services/health.service';
 
@@ -11,8 +15,28 @@ import { HealthService } from '@core/services/health.service';
     CommonModule,
     RouterLink,
     RouterLinkActive,
+    MatChipsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  styles: [`
+    .status-chip-online {
+      background-color: #a5e1a7 !important;
+      color: white !important;
+    }
+
+    .status-chip-offline {
+      background-color: #f44336 !important;
+      color: white !important;
+    }
+
+    .status-chip-checking {
+      background-color: #ff9800 !important;
+      color: white !important;
+    }
+  `]
 })
 export class NavbarComponent {
   authService = inject(AuthService);
@@ -69,4 +93,3 @@ export class NavbarComponent {
     }
   }
 }
-
