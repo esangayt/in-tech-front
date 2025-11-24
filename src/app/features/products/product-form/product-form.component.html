@@ -17,151 +17,92 @@
   @if (initialLoading()) {
     <app-loading-spinner message="Cargando datos..." />
   } @else {
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-      <app-error-alert [message]="errorMessage()" (dismissed)="errorMessage.set('')" />
+    <mat-card>
+      <mat-card-content>
+        <app-error-alert [message]="errorMessage()" (dismissed)="errorMessage.set('')" />
 
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-        <div class="space-y-6">
-          <!-- Name -->
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Nombre del producto <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-              [class.border-red-500]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
-            />
-            @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
-              <div class="mt-1">
-                @if (productForm.get('name')?.errors?.['required']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">El nombre es requerido</p>
-                }
-                @if (productForm.get('name')?.errors?.['maxlength']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">
-                    El nombre no puede tener más de 150 caracteres
-                  </p>
-                }
-              </div>
-            }
-          </div>
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="space-y-4">
+            <!-- Name -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Nombre del producto</mat-label>
+              <input matInput formControlName="name" required />
+              @if (productForm.get('name')?.hasError('required')) {
+                <mat-error>El nombre es requerido</mat-error>
+              }
+              @if (productForm.get('name')?.hasError('maxlength')) {
+                <mat-error>El nombre no puede tener más de 150 caracteres</mat-error>
+              }
+            </mat-form-field>
 
-          <!-- SKU -->
-          <div>
-            <label for="sku" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              SKU <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="sku"
-              type="text"
-              formControlName="sku"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-              [class.border-red-500]="productForm.get('sku')?.invalid && productForm.get('sku')?.touched"
-            />
-            @if (productForm.get('sku')?.invalid && productForm.get('sku')?.touched) {
-              <div class="mt-1">
-                @if (productForm.get('sku')?.errors?.['required']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">El SKU es requerido</p>
-                }
-                @if (productForm.get('sku')?.errors?.['minlength']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">
-                    El SKU debe tener al menos 3 caracteres
-                  </p>
-                }
-                @if (productForm.get('sku')?.errors?.['maxlength']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">
-                    El SKU no puede tener más de 50 caracteres
-                  </p>
-                }
-              </div>
-            }
-          </div>
+            <!-- SKU -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>SKU</mat-label>
+              <input matInput formControlName="sku" required />
+              @if (productForm.get('sku')?.hasError('required')) {
+                <mat-error>El SKU es requerido</mat-error>
+              }
+              @if (productForm.get('sku')?.hasError('minlength')) {
+                <mat-error>El SKU debe tener al menos 3 caracteres</mat-error>
+              }
+              @if (productForm.get('sku')?.hasError('maxlength')) {
+                <mat-error>El SKU no puede tener más de 50 caracteres</mat-error>
+              }
+            </mat-form-field>
 
-          <!-- Price -->
-          <div>
-            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Precio <span class="text-red-500">*</span>
-            </label>
-            <div class="mt-1 relative rounded-md shadow-sm">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
-              </div>
-              <input
-                id="price"
-                type="number"
-                formControlName="price"
-                min="0"
-                step="0.01"
-                class="w-full pl-7 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                [class.border-red-500]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
-              />
-            </div>
-            @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
-              <div class="mt-1">
-                @if (productForm.get('price')?.errors?.['required']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">El precio es requerido</p>
-                }
-                @if (productForm.get('price')?.errors?.['min']) {
-                  <p class="text-sm text-red-600 dark:text-red-400">
-                    El precio debe ser mayor o igual a 0
-                  </p>
-                }
-              </div>
-            }
-          </div>
+            <!-- Price -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Precio</mat-label>
+              <span matTextPrefix>$&nbsp;</span>
+              <input matInput type="number" formControlName="price" min="0" step="0.01" required />
+              @if (productForm.get('price')?.hasError('required')) {
+                <mat-error>El precio es requerido</mat-error>
+              }
+              @if (productForm.get('price')?.hasError('min')) {
+                <mat-error>El precio debe ser mayor o igual a 0</mat-error>
+              }
+            </mat-form-field>
 
-          <!-- Owner -->
-          <div>
-            <label for="owner" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Propietario (opcional)
-            </label>
-            @if (loadingPersons()) {
-              <div class="text-sm text-gray-500 dark:text-gray-400">Cargando personas...</div>
-            } @else {
-              <select
-                id="owner"
-                formControlName="owner"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+            <!-- Owner -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Propietario (opcional)</mat-label>
+              <mat-select formControlName="owner">
+                <mat-option [value]="null">Sin propietario</mat-option>
+                @if (loadingPersons()) {
+                  <mat-option disabled>Cargando personas...</mat-option>
+                } @else {
+                  @for (person of persons(); track person.id) {
+                    <mat-option [value]="person.id">
+                      {{ person.first_name }} {{ person.last_name }} ({{ person.email }})
+                    </mat-option>
+                  }
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-end gap-3 pt-4">
+              <button mat-stroked-button type="button" routerLink="/products">
+                Cancelar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="productForm.invalid || loading()"
               >
-                <option [value]="null">Sin propietario</option>
-                @for (person of persons(); track person.id) {
-                  <option [value]="person.id">
-                    {{ person.first_name }} {{ person.last_name }} ({{ person.email }})
-                  </option>
+                @if (loading()) {
+                  <mat-icon class="animate-spin">refresh</mat-icon>
+                  Guardando...
+                } @else {
+                  {{ isEditMode() ? 'Actualizar' : 'Crear' }}
                 }
-              </select>
-            }
+              </button>
+            </div>
           </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="mt-6 flex items-center justify-end gap-3">
-          <a
-            routerLink="/products"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Cancelar
-          </a>
-          <button
-            type="submit"
-            [disabled]="productForm.invalid || loading()"
-            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            @if (loading()) {
-              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Guardando...
-            } @else {
-              {{ isEditMode() ? 'Actualizar' : 'Crear' }}
-            }
-          </button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
   }
 </div>
 
