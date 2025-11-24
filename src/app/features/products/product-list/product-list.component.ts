@@ -4,6 +4,15 @@ import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProductService } from '@core/services/product.service';
 import { Product, ProductFilters } from '@core/models/product.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -18,6 +27,15 @@ import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.
     CommonModule,
     RouterLink,
     ReactiveFormsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCardModule,
+    MatPaginatorModule,
+    MatTooltipModule,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     ErrorAlertComponent
@@ -35,6 +53,9 @@ export class ProductListComponent implements OnInit {
 
   filterForm: FormGroup;
   Math = Math;
+
+  // Columnas de la tabla Material
+  displayedColumns: string[] = ['name', 'sku', 'price', 'owner', 'created_at', 'actions'];
 
   constructor(
     private productService: ProductService,
@@ -104,6 +125,12 @@ export class ProductListComponent implements OnInit {
   clearFilters(): void {
     this.filterForm.reset();
     this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPage.set(event.pageIndex + 1);
+    this.pageSize.set(event.pageSize);
     this.loadProducts();
   }
 

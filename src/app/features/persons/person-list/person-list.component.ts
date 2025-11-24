@@ -3,6 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PersonService } from '@core/services/person.service';
 import { Person, PersonFilters } from '@core/models/person.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -17,6 +26,15 @@ import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.
     CommonModule,
     RouterLink,
     ReactiveFormsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCardModule,
+    MatPaginatorModule,
+    MatTooltipModule,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     ErrorAlertComponent
@@ -34,6 +52,9 @@ export class PersonListComponent implements OnInit {
 
   filterForm: FormGroup;
   Math = Math;
+
+  // Columnas de la tabla Material
+  displayedColumns: string[] = ['name', 'email', 'created_at', 'actions'];
 
   constructor(
     private personService: PersonService,
@@ -59,6 +80,8 @@ export class PersonListComponent implements OnInit {
       ...this.filterForm.value,
       page: this.currentPage()
     };
+
+    console.log(filters, 'filters')
 
     Object.keys(filters).forEach(key => {
       if (!filters[key as keyof PersonFilters]) {
@@ -88,6 +111,12 @@ export class PersonListComponent implements OnInit {
   clearFilters(): void {
     this.filterForm.reset();
     this.currentPage.set(1);
+    this.loadPersons();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPage.set(event.pageIndex + 1);
+    this.pageSize.set(event.pageSize);
     this.loadPersons();
   }
 
