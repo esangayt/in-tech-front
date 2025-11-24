@@ -49,7 +49,6 @@ export class ProductListComponent implements OnInit {
   currentPage = signal(1);
   pageSize = signal(10);
   totalCount = signal(0);
-  totalPages = signal(0);
 
   filterForm: FormGroup;
   displayedColumns: string[] = ['name', 'sku', 'price', 'owner', 'created_at', 'actions'];
@@ -103,7 +102,6 @@ export class ProductListComponent implements OnInit {
       next: (response) => {
         this.products.set(response.results);
         this.totalCount.set(response.count);
-        this.totalPages.set(Math.ceil(response.count / this.pageSize()));
         this.loading.set(false);
       },
       error: (error) => {

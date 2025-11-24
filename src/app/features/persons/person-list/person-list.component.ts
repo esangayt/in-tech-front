@@ -48,12 +48,7 @@ export class PersonListComponent implements OnInit {
   currentPage = signal(1);
   pageSize = signal(10);
   totalCount = signal(0);
-  totalPages = signal(0);
-
   filterForm: FormGroup;
-  Math = Math;
-
-  // Columnas de la tabla Material
   displayedColumns: string[] = ['name', 'email', 'created_at', 'actions'];
 
   constructor(
@@ -93,7 +88,6 @@ export class PersonListComponent implements OnInit {
       next: (response) => {
         this.persons.set(response.results);
         this.totalCount.set(response.count);
-        this.totalPages.set(Math.ceil(response.count / this.pageSize()));
         this.loading.set(false);
       },
       error: (error) => {

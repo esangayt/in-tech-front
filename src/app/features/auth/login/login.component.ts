@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ErrorAlertComponent } from '@shared/components/error-alert/error-alert.component';
-
-// Angular Material Imports
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +18,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     ReactiveFormsModule,
     ErrorAlertComponent,
-    // Angular Material
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -48,7 +45,6 @@ export class LoginComponent {
       password: ['', Validators.required]
     });
 
-    // Get return url from route parameters or default to '/persons'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/persons';
   }
 
