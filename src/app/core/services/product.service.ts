@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 import { Product, ProductListResponse, ProductFilters } from '../models/product.model';
+import {buildHttpParams} from '@core/utils/http.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -13,30 +14,7 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getProducts(filters?: ProductFilters): Observable<ProductListResponse> {
-    let params = new HttpParams();
-
-    if (filters) {
-      if (filters.sku) {
-        params = params.set('sku', filters.sku);
-      }
-      if (filters.price_min !== undefined && filters.price_min !== null) {
-        params = params.set('price_min', filters.price_min.toString());
-      }
-      if (filters.price_max !== undefined && filters.price_max !== null) {
-        params = params.set('price_max', filters.price_max.toString());
-      }
-      if (filters.q) {
-        params = params.set('q', filters.q);
-      }
-      if (filters.ordering) {
-        params = params.set('ordering', filters.ordering);
-      }
-      if (filters.page) {
-        params = params.set('page', filters.page.toString());
-      }
-    }
-
-    return this.http.get<ProductListResponse>(`${this.apiUrl}/`, { params });
+    return this.http.get<ProductListResponse>(`${this.apiUrl}/`,{params: buildHttpParams(filters)});
   }
 
   getProduct(id: string): Observable<Product> {

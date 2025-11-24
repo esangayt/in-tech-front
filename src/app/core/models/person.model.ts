@@ -17,7 +17,9 @@ export interface PersonListResponse {
 export interface PersonFilters {
   email?: string;
   last_name?: string;
+  search?: string;
   ordering?: string;
+  page_size?: number;
   page?: number;
 }
 

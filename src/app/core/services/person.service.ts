@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { Person, PersonListResponse, PersonFilters } from '../models/person.model';
+import { buildHttpParams } from '@core/utils/http.utils';
+import {environment} from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,24 +14,7 @@ export class PersonService {
   constructor(private http: HttpClient) {}
 
   getPersons(filters?: PersonFilters): Observable<PersonListResponse> {
-    let params = new HttpParams();
-
-    if (filters) {
-      if (filters.email) {
-        params = params.set('email', filters.email);
-      }
-      if (filters.last_name) {
-        params = params.set('last_name', filters.last_name);
-      }
-      if (filters.ordering) {
-        params = params.set('ordering', filters.ordering);
-      }
-      if (filters.page) {
-        params = params.set('page', filters.page.toString());
-      }
-    }
-
-    return this.http.get<PersonListResponse>(`${this.apiUrl}/`, { params });
+    return this.http.get<PersonListResponse>(`${this.apiUrl}/`, {params: buildHttpParams(filters)});
   }
 
   getPerson(id: string): Observable<Person> {

@@ -14,70 +14,65 @@
     </div>
   </div>
 
-  <app-error-alert [message]="errorMessage()" (dismissed)="errorMessage.set('')" />
+  <app-error-alert [message]="errorMessage()" (dismissed)="errorMessage.set('')"/>
 
   <!-- Filters -->
-  <mat-card class="mb-6">
-    <mat-card-content>
-      <form [formGroup]="filterForm">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-4">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Búsqueda general</mat-label>
-            <input matInput formControlName="q" placeholder="Buscar por nombre...">
-            <mat-icon matPrefix>search</mat-icon>
-          </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>SKU</mat-label>
-            <input matInput formControlName="sku" placeholder="Buscar por SKU...">
-            <mat-icon matPrefix>qr_code</mat-icon>
-          </mat-form-field>
+  <form [formGroup]="filterForm">
+    <div class="flex gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Búsqueda general</mat-label>
+        <input matInput formControlName="q" placeholder="Buscar por nombre...">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Precio mínimo</mat-label>
-            <span matTextPrefix>$&nbsp;</span>
-            <input matInput type="number" formControlName="price_min" placeholder="0" min="0" step="0.01">
-          </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>SKU</mat-label>
+        <input matInput formControlName="sku" placeholder="Buscar por SKU...">
+        <mat-icon matPrefix>qr_code</mat-icon>
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Precio máximo</mat-label>
-            <span matTextPrefix>$&nbsp;</span>
-            <input matInput type="number" formControlName="price_max" placeholder="10000" min="0" step="0.01">
-          </mat-form-field>
-        </div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Precio mínimo</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" formControlName="price_min" placeholder="0" min="0" step="0.01">
+      </mat-form-field>
 
-        <div class="flex items-end gap-4">
-          <mat-form-field appearance="outline" class="flex-1">
-            <mat-label>Ordenar por</mat-label>
-            <mat-select formControlName="ordering">
-              <mat-option value="">Sin orden</mat-option>
-              <mat-option value="name">Nombre A-Z</mat-option>
-              <mat-option value="-name">Nombre Z-A</mat-option>
-              <mat-option value="price">Precio ascendente</mat-option>
-              <mat-option value="-price">Precio descendente</mat-option>
-              <mat-option value="created_at">Fecha ascendente</mat-option>
-              <mat-option value="-created_at">Fecha descendente</mat-option>
-            </mat-select>
-            <mat-icon matPrefix>sort</mat-icon>
-          </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Precio máximo</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" formControlName="price_max" placeholder="10000" min="0" step="0.01">
+      </mat-form-field>
+    </div>
 
-          <div class="flex gap-2">
-            <button mat-raised-button color="primary" type="button" (click)="applyFilters()">
-              <mat-icon>search</mat-icon>
-              Buscar
-            </button>
-            <button mat-stroked-button type="button" (click)="clearFilters()">
-              <mat-icon>clear</mat-icon>
-              Limpiar
-            </button>
-          </div>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+    <div class="flex gap-4">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Ordenar por</mat-label>
+        <mat-select formControlName="ordering">
+          <mat-option value="">Sin orden</mat-option>
+          <mat-option value="name">Nombre A-Z</mat-option>
+          <mat-option value="-name">Nombre Z-A</mat-option>
+          <mat-option value="price">Precio ascendente</mat-option>
+          <mat-option value="-price">Precio descendente</mat-option>
+          <mat-option value="created_at">Fecha ascendente</mat-option>
+          <mat-option value="-created_at">Fecha descendente</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>sort</mat-icon>
+      </mat-form-field>
+
+      <div class="flex gap-2">
+        <button mat-icon-button color="primary" type="button" (click)="applyFilters()">
+          <mat-icon>search</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+    </div>
+  </form>
 
   @if (loading()) {
-    <app-loading-spinner message="Cargando productos..." />
+    <app-loading-spinner message="Cargando productos..."/>
   } @else if (products().length === 0) {
     <app-empty-state
       title="No hay productos"
@@ -156,17 +151,17 @@
     </mat-card>
 
     <!-- Pagination -->
-      <mat-card class="mt-4">
-        <mat-paginator
-          [length]="totalCount()"
-          [pageSize]="pageSize()"
-          [pageIndex]="currentPage() - 1"
-          [pageSizeOptions]="[5, 10, 25, 50]"
-          (page)="onPageChange($event)"
-          showFirstLastButtons
-        >
-        </mat-paginator>
-      </mat-card>
+    <mat-card class="mt-4">
+      <mat-paginator
+        [length]="totalCount()"
+        [pageSize]="pageSize()"
+        [pageIndex]="currentPage() - 1"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </mat-card>
   }
 </div>
 

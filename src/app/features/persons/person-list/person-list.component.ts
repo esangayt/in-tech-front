@@ -62,8 +62,7 @@ export class PersonListComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
-      email: [''],
-      last_name: [''],
+      search: [''],
       ordering: ['']
     });
   }
@@ -78,7 +77,8 @@ export class PersonListComponent implements OnInit {
 
     const filters: PersonFilters = {
       ...this.filterForm.value,
-      page: this.currentPage()
+      page: this.currentPage(),
+      page_size: this.pageSize()
     };
 
     console.log(filters, 'filters')
@@ -120,20 +120,6 @@ export class PersonListComponent implements OnInit {
     this.loadPersons();
   }
 
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
-      this.loadPersons();
-    }
-  }
-
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
-      this.loadPersons();
-    }
-  }
-
   confirmDelete(person: Person): void {
     const dialogData: ConfirmDialogData = {
       title: 'Confirmar eliminación',
@@ -165,4 +151,3 @@ export class PersonListComponent implements OnInit {
     });
   }
 }
-

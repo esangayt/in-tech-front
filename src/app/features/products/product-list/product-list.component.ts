@@ -52,9 +52,6 @@ export class ProductListComponent implements OnInit {
   totalPages = signal(0);
 
   filterForm: FormGroup;
-  Math = Math;
-
-  // Columnas de la tabla Material
   displayedColumns: string[] = ['name', 'sku', 'price', 'owner', 'created_at', 'actions'];
 
   constructor(
@@ -74,7 +71,6 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
 
-    // Search with debounce
     this.filterForm.get('q')?.valueChanges
       .pipe(
         debounceTime(400),
@@ -92,10 +88,10 @@ export class ProductListComponent implements OnInit {
 
     const filters: ProductFilters = {
       ...this.filterForm.value,
-      page: this.currentPage()
+      page: this.currentPage(),
+      page_size: this.pageSize()
     };
 
-    // Remove empty filters
     Object.keys(filters).forEach(key => {
       const value = filters[key as keyof ProductFilters];
       if (value === '' || value === null || value === undefined) {
@@ -132,20 +128,6 @@ export class ProductListComponent implements OnInit {
     this.currentPage.set(event.pageIndex + 1);
     this.pageSize.set(event.pageSize);
     this.loadProducts();
-  }
-
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
-      this.loadProducts();
-    }
-  }
-
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
-      this.loadProducts();
-    }
   }
 
   confirmDelete(product: Product): void {

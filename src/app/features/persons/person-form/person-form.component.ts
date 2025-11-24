@@ -78,9 +78,7 @@ export class PersonFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.personForm.invalid) {
-      Object.keys(this.personForm.controls).forEach(key => {
-        this.personForm.get(key)?.markAsTouched();
-      });
+      this.personForm.markAllAsTouched();
       return;
     }
 
