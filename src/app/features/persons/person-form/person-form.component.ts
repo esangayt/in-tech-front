@@ -52,7 +52,7 @@ export class PersonFormComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log(id)
+
     if (id) {
       this.personId = `${id}`
       this.isEditMode.set(true);
